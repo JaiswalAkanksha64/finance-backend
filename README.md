@@ -169,5 +169,48 @@ responsibility making code readable and maintainable.
 | 404 | Not Found - Resource doesn't exist |
 | 500 | Internal Server Error |
 
+## Sample API Requests
+
+### Register a new user
+```json
+POST /api/auth/register
+{
+    "name": "John Doe",
+    "email": "john@gmail.com",
+    "password": "123456",
+    "role": "ANALYST"
+}
+```
+
+### Login
+```json
+POST /api/auth/login
+{
+    "email": "john@gmail.com",
+    "password": "123456"
+}
+```
+
+### Create a financial record
+```json
+POST /api/records
+Authorization: Bearer <token>
+{
+    "amount": 50000,
+    "type": "INCOME",
+    "category": "SALARY",
+    "date": "2026-04-03",
+    "notes": "April salary"
+}
+```
+
+### Filter records by type
+GET /api/records?type=EXPENSE
+Authorization: Bearer <token>
+
+### Get dashboard summary
+GET /api/dashboard/summary
+Authorization: Bearer <token>
+
 
 
