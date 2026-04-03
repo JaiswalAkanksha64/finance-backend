@@ -40,7 +40,7 @@ src/main/java/com/zorvyn/finance/backend/
 
 **1. Clone the repository**
 
-git clone https://github.com/YOUR_USERNAME/finance-backend.git
+git clone https://github.com/JaiswalAkanksha64/finance-backend
 cd finance-backend
 
 **2. Create MySQL database**
