@@ -26,9 +26,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
         http
+                // Disable CSRF as we use JWT tokens (stateless)
                 .csrf(AbstractHttpConfigurer::disable)
+
+                // Use stateless session - no server side sessions
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // Custom error responses for auth failures
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setContentType("application/json");
@@ -42,32 +47,51 @@ public class SecurityConfig {
                         })
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints - no token required
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+
+                        // Records - all roles can view
                         .requestMatchers(HttpMethod.GET, "/api/records/**")
                         .hasAnyRole("VIEWER", "ANALYST", "ADMIN")
+
+                        // Records - only ANALYST and ADMIN can create/update
                         .requestMatchers(HttpMethod.POST, "/api/records/**")
                         .hasAnyRole("ANALYST", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/records/**")
                         .hasAnyRole("ANALYST", "ADMIN")
+
+                        // Records - only ADMIN can delete
                         .requestMatchers(HttpMethod.DELETE, "/api/records/**")
                         .hasRole("ADMIN")
+
+                        // Users - only ADMIN can manage
                         .requestMatchers("/api/users/**")
                         .hasRole("ADMIN")
+
+                        // Dashboard - all roles can view
                         .requestMatchers("/api/dashboard/**")
                         .hasAnyRole("VIEWER", "ANALYST", "ADMIN")
+
+                        // Any other request requires authentication
                         .anyRequest().authenticated()
                 )
+
+                // Add JWT filter before Spring's auth filter
                 .addFilterBefore(jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+    // BCrypt password encoder for secure password hashing
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(
