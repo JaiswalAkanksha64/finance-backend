@@ -109,8 +109,11 @@ http://localhost:8080/swagger-ui/index.html
 ## Filtering and Pagination
 
 GET /api/records?type=EXPENSE
+
 GET /api/records?category=FOOD
+
 GET /api/records?startDate=2026-01-01&endDate=2026-03-31
+
 GET /api/records?page=0&size=10
 
 ## Design Decisions
