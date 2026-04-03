@@ -53,6 +53,16 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public UserDTO setUserStatus(Long id, Boolean status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with id: " + id));
+        user.setActive(status);
+        userRepository.save(user);
+        return convertToDTO(user);
+    }
+
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
